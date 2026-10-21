@@ -1,0 +1,12 @@
+{
+  "name": "tenkoh",
+  "owner": { "name": "tenkoh" },
+  "description": "tenkoh が配布する Claude Code プラグイン集",
+  "plugins": [
+    {
+      "name": "hibiki",
+      "source": "./plugins/hibiki",
+      "description": "Claudeの応答をOpenAI API互換サーバーを使って音声再生"
+    }
+  ]
+}

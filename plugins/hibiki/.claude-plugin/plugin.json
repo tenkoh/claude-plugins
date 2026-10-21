@@ -1,0 +1,59 @@
+{
+  "name": "hibiki",
+  "version": "0.1.0",
+  "description": "Claudeの応答をOpenAI API互換サーバーを使って音声再生",
+  "author": {
+    "name": "tenkoh"
+  },
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "endpoint": {
+      "type": "string",
+      "title": "TTS endpoint",
+      "description": "OpenAI互換APIのベースURL（/audio/speech の手前まで）",
+      "default": "http://127.0.0.1:8080/v1"
+    },
+    "voice": {
+      "type": "string",
+      "title": "Voice",
+      "description": "話者名（例: ono_anna）",
+      "default": "ono_anna"
+    },
+    "model": {
+      "type": "string",
+      "title": "Model",
+      "description": "モデルID。空なら送らない",
+      "default": ""
+    },
+    "instructions": {
+      "type": "string",
+      "title": "Instructions",
+      "description": "話し方の指示。対応モデルのみ。空なら送らない",
+      "default": ""
+    },
+    "speed": {
+      "type": "string",
+      "title": "Speed",
+      "description": "再生速度（例: 1.2）。対応モデルのみ。空なら送らない",
+      "default": ""
+    },
+    "player": {
+      "type": "string",
+      "title": "Player",
+      "description": "PCMを再生するコマンド（ffplay / play / paplay / aplay）。未設定やコマンドが無い場合はエラー",
+      "options": [
+        "ffplay",
+        "play",
+        "paplay",
+        "aplay"
+      ],
+      "required": true
+    },
+    "codePlaceholder": {
+      "type": "string",
+      "title": "Code placeholder",
+      "description": "コードブロックの代わりに読み上げる文言。空にするとコードブロックは無音で飛ばす",
+      "default": "ここにコードがきます"
+    }
+  }
+}
