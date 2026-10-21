@@ -16,8 +16,8 @@
     "voice": {
       "type": "string",
       "title": "Voice",
-      "description": "話者名（例: ono_anna）",
-      "default": "ono_anna"
+      "description": "話者名（例: ono_anna）。none ならモデルが声を選ぶ（Irodori-TTS / Drama 3）",
+      "default": ""
     },
     "model": {
       "type": "string",

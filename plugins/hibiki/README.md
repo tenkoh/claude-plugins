@@ -40,15 +40,14 @@ speech serve qwen3-tts-0.6b
 | キー | 既定値 | 説明 |
 |---|---|---|
 | `endpoint` | `http://127.0.0.1:8080/v1` | ベースURL。`/audio/speech` を付けて叩く |
-| `voice` | `ono_anna` | 話者 |
+| `voice` | 空 | 話者。使うモデルに合わせて設定する。speech.cpp では必須で、モデルの話者名か `--add-voice` で追加した名前を指定する。`none` はモデルが声を選ぶ指定（Irodori-TTS / Drama 3）。Qwen3-TTS では話者名が必要 |
 | `model` / `instructions` / `speed` | 空 | 空なら送らない（speech.cpp はモデルが受け付けないメンバーを 400 で拒否するため） |
 | `player` | なし（必須） | `ffplay` / `play` / `paplay` / `aplay` から選ぶ。未設定・未インストールならエラー |
 | `codePlaceholder` | `ここにコードがきます` | 空にするとコードブロックは無音で飛ばす |
 
 ## 送るリクエスト
 
-OpenAI の create speech と同じメンバーだけを送る: `input`・`voice`・`response_format: "pcm"`、設定されていれば `model`・`instructions`・`speed`。
-モデルの選択・追加ボイス・デバイスなど speech.cpp 固有の設定は `speech serve` の起動オプションで渡す。
+OpenAI の create speech と同じメンバーだけを送る: `input`・`voice`・`response_format: "pcm"`、設定されていれば `model`・`instructions`・`speed`。モデルの選択・追加ボイス・デバイスなど speech.cpp 固有の設定は `speech serve` の起動オプションで渡す。
 
 ## 仕組み
 
