@@ -15,6 +15,7 @@ type Options = {
   instructions: string
   speed: string
   player: string
+  volume: string
   codePlaceholder: string
 }
 
@@ -73,6 +74,7 @@ async function speak($: EngineInterface) {
     env: {
       TTS_URL: `${o.endpoint.replace(/\/+$/, '')}/audio/speech`,
       TTS_PLAYER: o.player ?? '',
+      TTS_VOLUME: o.volume?.trim() ?? '',
     },
   })
   current = playback

@@ -4,6 +4,8 @@
 # stdin : the JSON request body
 # env   : TTS_URL          full URL of the speech endpoint (required)
 #         TTS_PLAYER       ffplay | play | paplay | aplay (required, no fallback)
+#         TTS_VOLUME       playback gain as a factor, e.g. 0.5 or 1.5 (optional;
+#                          empty leaves the player's default; aplay has no option)
 #
 # curl and the player are separate children so a TERM stops both
 # (the mod kills this script when the user presses stop).
@@ -20,6 +22,15 @@ case "$player" in
   *)  echo "unknown player: $player (ffplay | play | paplay | aplay)" >&2; exit 2 ;;
 esac
 command -v "$player" >/dev/null || { echo "$player not found on PATH" >&2; exit 2; }
+
+# Volume is checked up front too, so a bad value never reaches the server.
+volume="${TTS_VOLUME:-}"
+if [ -n "$volume" ]; then
+  [[ "$volume" =~ ^([0-9]+(\.[0-9]*)?|\.[0-9]+)$ ]] \
+    || { echo "volume must be a non-negative number: $volume" >&2; exit 2; }
+  [ "$player" != aplay ] \
+    || { echo "aplay has no volume option; use amixer, or another player" >&2; exit 2; }
+fi
 
 work=$(mktemp -d "${TMPDIR:-/tmp}/hibiki.XXXXXX") || exit 2
 body="$work/body.json"
@@ -71,16 +82,25 @@ fi
 rate=$(tr -d '\r' < "$hdr" | awk -F': *' 'tolower($1)=="x-sample-rate"{print $2}' | tail -n1)
 [ -n "$rate" ] || rate=24000
 
+# Empty arrays are spelled ${a[@]+...} because bash 3.2 (macOS) trips set -u on them.
+vol=()
 case "$player" in
   ffplay)
+    [ -n "$volume" ] && vol=(-af "volume=$volume")
     if ffplay -hide_banner -h demuxer=s16le 2>/dev/null | grep -q ch_layout; then
       layout=(-ch_layout mono)
     else
       layout=(-ac 1)
     fi
-    cmd=(ffplay -nodisp -autoexit -hide_banner -loglevel error -f s16le -ar "$rate" "${layout[@]}" -i -) ;;
-  play)   cmd=(play -q -t raw -e signed-integer -b 16 -c 1 -r "$rate" -) ;;
-  paplay) cmd=(paplay --raw --format=s16le --rate="$rate" --channels=1) ;;
+    cmd=(ffplay -nodisp -autoexit -hide_banner -loglevel error -f s16le -ar "$rate" "${layout[@]}" ${vol[@]+"${vol[@]}"} -i -) ;;
+  play)
+    # -v is an input option, so it goes before the input file.
+    [ -n "$volume" ] && vol=(-v "$volume")
+    cmd=(play -q ${vol[@]+"${vol[@]}"} -t raw -e signed-integer -b 16 -c 1 -r "$rate" -) ;;
+  paplay)
+    # paplay takes 0..65536, where 65536 is 100%.
+    [ -n "$volume" ] && vol=(--volume="$(awk -v v="$volume" 'BEGIN{printf "%d", v*65536+0.5}')")
+    cmd=(paplay --raw --format=s16le --rate="$rate" --channels=1 ${vol[@]+"${vol[@]}"}) ;;
   aplay)  cmd=(aplay -q -f S16_LE -r "$rate" -c 1) ;;
 esac
 

@@ -1,6 +1,6 @@
 {
   "name": "hibiki",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Claudeの応答をOpenAI API互換サーバーを使って音声再生",
   "author": {
     "name": "tenkoh"
@@ -48,6 +48,12 @@
         "aplay"
       ],
       "required": true
+    },
+    "volume": {
+      "type": "string",
+      "title": "Volume",
+      "description": "再生音量の倍率（例: 0.5、1.5）。1を超えると音割れすることがある。空なら再生コマンドの既定のまま。aplay は非対応",
+      "default": ""
     },
     "codePlaceholder": {
       "type": "string",

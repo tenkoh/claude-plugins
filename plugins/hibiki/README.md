@@ -43,6 +43,7 @@ speech serve qwen3-tts-0.6b
 | `voice` | 空 | 話者。使うモデルに合わせて設定する。speech.cpp では必須で、モデルの話者名か `--add-voice` で追加した名前を指定する。`none` はモデルが声を選ぶ指定（Irodori-TTS / Drama 3）。Qwen3-TTS では話者名が必要 |
 | `model` / `instructions` / `speed` | 空 | 空なら送らない（speech.cpp はモデルが受け付けないメンバーを 400 で拒否するため） |
 | `player` | なし（必須） | `ffplay` / `play` / `paplay` / `aplay` から選ぶ。未設定・未インストールならエラー |
+| `volume` | 空 | 再生音量の倍率（例: `0.5`、`1.5`）。サーバーには送らず再生コマンドに渡す（ffplay は `-af volume=`、play は `-v`、paplay は `--volume=` に換算）。1 を超えると音割れすることがある。空なら再生コマンドの既定のまま。`aplay` は音量オプションが無いので指定するとエラー（`amixer` で調整する） |
 | `codePlaceholder` | `ここにコードがきます` | 空にするとコードブロックは無音で飛ばす |
 
 ## 送るリクエスト
